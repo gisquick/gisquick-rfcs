@@ -65,7 +65,7 @@ RFC merged into the RFC repo as a markdown file. At that point the RFC
 is 'active' and may be implemented with the goal of eventual inclusion
 into Gisquick.
 
-* Fork the RFC repo https://github.com/gisquick-npo/gisquick-rfcs
+* Fork the RFC repo https://github.com/gislab-npo/gisquick-rfcs
 
 * Copy `0000-template.md` to `active-rfcs/0000-my-feature.md` (where
 'my-feature' is descriptive. don't assign an RFC number yet).
