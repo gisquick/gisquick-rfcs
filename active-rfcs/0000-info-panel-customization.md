@@ -89,3 +89,31 @@ to use max. caching headers for serving.
 </table>
 
 ## Map web application
+
+Based on project configuration metadata, application should load required JavaScript modules
+and use right components in Info Panel.
+
+## Settings web application
+
+User interface for uploading and configuration.
+
+# Drawbacks
+
+This aproach requires:
+- programming skills
+- setup of development evnironment for Gisquick's map application
+- knowledge of Vue.js and used UI library
+
+Also custom components may need some maintenance to keep up to date with map application.
+
+# Alternatives
+
+N/A
+
+# Unresolved questions
+
+- Support for multiple components in single JavaScript (UMD) module. Using big library
+in multiple components would be more effective
+- Cache strategy - filenames hashing, http headers
+- Compressed (gzip) versions of JavaScript files - allow to upload, or generate after upload
+- Access rules for serving project's JavaScript files
