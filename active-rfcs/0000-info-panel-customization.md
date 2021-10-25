@@ -117,3 +117,130 @@ in multiple components would be more effective
 - Cache strategy - filenames hashing, http headers
 - Compressed (gzip) versions of JavaScript files - allow to upload, or generate after upload
 - Access rules for serving project's JavaScript files
+
+
+# UPDATE
+
+## Upload API proposal
+
+<table>
+  <tbody>
+    <tr>
+      <td>URL</td>
+      <td><code>/api/project/script/{user}/{directory}</code></td>
+    </tr>
+    <tr>
+      <td>Method</td>
+      <td><code>POST</code></td>
+    </tr>
+    <tr>
+      <td>Content-Type</td>
+      <td><code>multipart/form-data</code></td>
+    </tr>
+  </tbody>
+</table>
+
+Example:
+```
+Content-Disposition: form-data; name="info"
+Content-Type: application/json
+{"path":"component.umd.min.js","components":["ComponentName"]}
+
+Content-Disposition: form-data; name="script"; filename="component.umd.min.js"
+Content-Type: text/javascript
+<file content>
+```
+
+Format of `scripts.json`
+```json
+{
+  "module": {
+    "path": "component..umd.js",
+    "components": ["Widget1", "Widget2"]
+  },
+  "widget": {
+    "path": "infopanel/widget.[hash].umd.js",
+    "components": ["Widget"]
+  }
+}
+```
+
+
+# Workflow
+
+## Setup and run Gisquick web application locally
+
+```
+git clone https://github.com/gislab-npo/gisquick
+cd gisquick/clients/gisquick-web
+```
+See README.md
+
+## Create a new Vue component
+
+Create a component, e.g. in `src/extensions/MyComponent.vue`:
+
+```javascript
+export default {
+  name: 'UniqeName', // mandatory, will be used to identify component
+  props: {
+    layer: Object,  // layer's config
+    feature: Object // ol Feature
+  }
+  /* rest of the component*/
+}
+```
+
+In order to use component before it's finished and bundled, you can assign component
+during development process with following confguration. This will override project's
+configuration in development mode.
+
+`src/dev/components.js`
+
+```javascript
+import MyComponent from '@/extensions/MyComponent.vue'
+
+export default {
+  infoPanelComponents: [
+    {
+      layer: 'layername',
+      component: MyComponent
+    }
+  ]
+}
+```
+
+## Build/bundle component(s)
+
+https://markus.oberlehner.net/blog/distributed-vue-applications-loading-components-via-http/
+
+Single component
+```
+CSS_EXTRACT=False npm run build -- --target lib --formats umd-min --dest dist/ --name mycomponent src/extensions/MyComponent.vue
+```
+
+Multiple components
+
+`src/extensions/index.js`
+
+```javascript
+import Component1 from './Component1'
+import Component2 from './Component2'
+
+export default [
+  Component1,
+  Component2
+]
+```
+
+```
+CSS_EXTRACT=False npm run build -- --target lib --formats umd-min --dest dist/ --name components src/extensions/index.js
+```
+
+## Upload bundled components
+
+1. Go to your profile page (https://projects.gisquick.org/user)
+2. Open settings of published project
+3. Go to layers settings
+4. Upload <name>.umd.min.js file
+5. Select component
